@@ -6,7 +6,7 @@ This is a full-stack web application that acts as a real-time translation bridge
 ## Features Attempted and Completed
 - ✅ Real-Time Doctor–Patient Translation (using OpenAI)
 - ✅ Text Chat Interface
-- ❌ Audio Recording & Storage (disabled to avoid errors)
+- ✅ Audio Recording & Storage (using Firebase Storage)
 - ✅ Conversation Logging (using Firebase Firestore)
 - ✅ Conversation Search
 - ✅ AI-Powered Summary (using OpenAI)
