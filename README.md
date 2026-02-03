@@ -6,7 +6,7 @@ This is a full-stack web application that acts as a real-time translation bridge
 ## Features Attempted and Completed
 - ✅ Real-Time Doctor–Patient Translation (using OpenAI)
 - ✅ Text Chat Interface
-- ✅ Audio Recording & Storage (using Firebase Storage)
+- ❌ Audio Recording & Storage (disabled to avoid errors)
 - ✅ Conversation Logging (using Firebase Firestore)
 - ✅ Conversation Search
 - ✅ AI-Powered Summary (using OpenAI)
@@ -23,7 +23,7 @@ This is a full-stack web application that acts as a real-time translation bridge
 - Firebase for data persistence
 
 ## Known Limitations, Trade-offs, or Unfinished Parts
-- Audio transcription is not implemented; audio messages are labeled as "Audio message" without text.
+- Audio recording is disabled to avoid Firebase errors.
 - Simple language assumption: Doctor speaks English, Patient speaks Spanish.
 - No authentication; anyone can access as doctor or patient.
 - Search is client-side only.

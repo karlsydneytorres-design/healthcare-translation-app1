@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 type Message = {
   id: string;
@@ -18,10 +17,7 @@ export default function Home() {
   const [role, setRole] = useState<'doctor' | 'patient' | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
     if (!role) return;
@@ -63,36 +59,6 @@ export default function Home() {
     if (input.trim()) {
       await sendMessage(input);
       setInput('');
-    }
-  };
-
-  const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    mediaRecorderRef.current = mediaRecorder;
-    audioChunksRef.current = [];
-
-    mediaRecorder.ondataavailable = (event) => {
-      audioChunksRef.current.push(event.data);
-    };
-
-    mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-      const audioRef = ref(storage, `audio/${Date.now()}.wav`);
-      await uploadBytes(audioRef, audioBlob);
-      const url = await getDownloadURL(audioRef);
-      // For simplicity, assume audio is transcribed to text, but here just send empty text with audio
-      await sendMessage('Audio message', url);
-    };
-
-    mediaRecorder.start();
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
     }
   };
 
@@ -139,11 +105,6 @@ export default function Home() {
                   <p className="text-sm font-semibold">{msg.role === 'doctor' ? 'Doctor' : 'Patient'}:</p>
                   <p>{msg.text}</p>
                   <p className="text-xs italic mt-1">{msg.translatedText}</p>
-                  {msg.audioUrl && (
-                    <audio controls className="mt-2 w-full">
-                      <source src={msg.audioUrl} type="audio/wav" />
-                    </audio>
-                  )}
                 </div>
               </div>
             ))}
@@ -166,12 +127,6 @@ export default function Home() {
                 placeholder="Type a message..."
               />
               <button onClick={handleSend} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Send</button>
-              <button
-                onClick={isRecording ? stopRecording : startRecording}
-                className={`px-4 py-2 rounded ${isRecording ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white`}
-              >
-                {isRecording ? 'Stop' : 'Record'}
-              </button>
               <button onClick={generateSummary} className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Summary</button>
             </div>
           </div>
