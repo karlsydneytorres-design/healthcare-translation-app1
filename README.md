@@ -48,4 +48,4 @@ This is a full-stack web application that acts as a real-time translation bridge
 5. Open [http://localhost:3000](http://localhost:3000)
 
 ## Deployed Live Link
-https://healthcare-translation-app1-di76fn4ym.vercel.app
+https://healthcare-translation-app1-theta.vercel.app
