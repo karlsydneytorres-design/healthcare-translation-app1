@@ -47,13 +47,16 @@ export default function Home() {
   const sendMessage = async (text: string, audioUrl?: string) => {
     if (!role) return;
     const translatedText = await translateText(text, role);
-    await addDoc(collection(db, 'conversations'), {
+    const docData: any = {
       text,
       translatedText,
-      audioUrl,
       role,
       timestamp: new Date(),
-    });
+    };
+    if (audioUrl) {
+      docData.audioUrl = audioUrl;
+    }
+    await addDoc(collection(db, 'conversations'), docData);
   };
 
   const handleSend = async () => {
