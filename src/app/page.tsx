@@ -125,44 +125,66 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="bg-gray-100 p-4">
-        <h1 className="text-xl">Healthcare Translation App - {role === 'doctor' ? 'Doctor' : 'Patient'}</h1>
-        <input
-          type="text"
-          placeholder="Search conversations..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-2 p-2 border"
-        />
-        <button onClick={generateSummary} className="ml-4 bg-purple-500 text-white px-4 py-2">Generate Summary</button>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <header className="bg-blue-600 text-white p-4 shadow-md">
+        <h1 className="text-xl font-bold">Healthcare Translation App</h1>
+        {role && <p className="text-sm">Logged in as: <span className="font-semibold">{role === 'doctor' ? 'Doctor' : 'Patient'}</span></p>}
       </header>
-      <div className="flex-1 p-4 overflow-y-auto">
-        {filteredMessages.map((msg) => (
-          <div key={msg.id} className={`mb-4 p-2 rounded ${msg.role === role ? 'bg-blue-100' : 'bg-gray-100'}`}>
-            <p><strong>{msg.role}:</strong> {msg.text}</p>
-            <p><em>Translated:</em> {msg.translatedText}</p>
-            {msg.audioUrl && <audio controls src={msg.audioUrl} />}
+      {role ? (
+        <div className="flex flex-col flex-1 max-w-4xl mx-auto w-full p-4">
+          <div className="flex-1 bg-white rounded-lg shadow-md p-4 mb-4 overflow-y-auto max-h-96">
+            {filteredMessages.map((msg) => (
+              <div key={msg.id} className={`mb-4 flex ${msg.role === role ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-xs p-3 rounded-lg ${msg.role === role ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+                  <p className="text-sm font-semibold">{msg.role === 'doctor' ? 'Doctor' : 'Patient'}:</p>
+                  <p>{msg.text}</p>
+                  <p className="text-xs italic mt-1">{msg.translatedText}</p>
+                  {msg.audioUrl && (
+                    <audio controls className="mt-2 w-full">
+                      <source src={msg.audioUrl} type="audio/wav" />
+                    </audio>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="p-4 border-t">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-          className="flex-1 p-2 border mr-2"
-          placeholder="Type a message..."
-        />
-        <button onClick={handleSend} className="bg-blue-500 text-white px-4 py-2 mr-2">Send</button>
-        <button
-          onClick={isRecording ? stopRecording : startRecording}
-          className={`px-4 py-2 ${isRecording ? 'bg-red-500' : 'bg-green-500'} text-white`}
-        >
-          {isRecording ? 'Stop Recording' : 'Record Audio'}
-        </button>
-      </div>
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <input
+              type="text"
+              placeholder="Search messages..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full p-2 border rounded mb-2"
+            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                className="flex-1 p-2 border rounded"
+                placeholder="Type a message..."
+              />
+              <button onClick={handleSend} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Send</button>
+              <button
+                onClick={isRecording ? stopRecording : startRecording}
+                className={`px-4 py-2 rounded ${isRecording ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white`}
+              >
+                {isRecording ? 'Stop' : 'Record'}
+              </button>
+              <button onClick={generateSummary} className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Summary</button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center flex-1">
+          <h2 className="text-2xl font-bold mb-4">Select Your Role</h2>
+          <div className="flex gap-4">
+            <button onClick={() => setRole('doctor')} className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Doctor</button>
+            <button onClick={() => setRole('patient')} className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600">Patient</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
